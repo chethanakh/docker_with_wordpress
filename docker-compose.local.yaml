@@ -1,0 +1,40 @@
+services:
+  mysql:
+    image: mysql:8.0.24
+    user: "${UID}:${GID}"
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_HOST}
+      - MYSQL_DATABASE=${DB_USER}
+      - MYSQL_USER=${DB_PASSWORD}
+      - MYSQL_PASSWORD=${DB_NAME}
+    ports:
+      - 3306:3306
+    volumes:
+      - ./mysql-data:/var/lib/mysql/
+  phpmyadmin:
+    depends_on:
+      - mysql
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8002:80
+    environment:
+      PMA_HOST: mysql
+      MYSQL_ROOT_PASSWORD: root
+  wordpress:
+    image: wordpress:latest
+    ports:
+      - ${PORT}:80
+    restart: always
+    volumes:
+      - ./wp-data/:/var/www/html
+    environment:
+      - WORDPRESS_DB_HOST=${DB_HOST}
+      - WORDPRESS_DB_USER=${DB_USER}
+      - WORDPRESS_DB_PASSWORD=${DB_PASSWORD}
+      - WORDPRESS_DB_NAME=${DB_NAME}
+
+  
+
+
